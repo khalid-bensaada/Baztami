@@ -22,7 +22,7 @@ let totalExpense = 0;
 let transactions = [];
 let editIndex = null;
 
-// ✅ Load from localStorage when page loads
+// Load from localStorage when page loads
 window.addEventListener("DOMContentLoaded", loadTransactions);
 
 // Show/Hide form
@@ -70,7 +70,7 @@ addTransactionBtn.addEventListener("click", () => {
 
   calculateTotals();
   renderHistory();
-  saveTransactions(); // ✅ Save changes
+  saveTransactions(); //  Save changes
 
   resetForm();
   addSection.classList.add("hidden");
@@ -119,12 +119,12 @@ function renderHistory() {
     });
 }
 
-// ✅ Save to localStorage
+//  Save to localStorage
 function saveTransactions() {
   localStorage.setItem("transactions", JSON.stringify(transactions));
 }
 
-// ✅ Load from localStorage
+//  Load from localStorage
 function loadTransactions() {
   const data = localStorage.getItem("transactions");
   if (data) {
@@ -139,7 +139,7 @@ window.deleteTransaction = function (index) {
   transactions.splice(index, 1);
   calculateTotals();
   renderHistory();
-  saveTransactions(); // ✅ Save after delete
+  saveTransactions(); //  Save after delete
 };
 
 // Edit
