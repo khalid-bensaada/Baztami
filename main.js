@@ -1,54 +1,58 @@
-// Select elements
-const addBtn = document.getElementById("newTransaction");
-const addSection = document.getElementById("add");
-const addTransactionBtn = document.getElementById("adding");
-const incomeBtn = document.getElementById("inc");
-const expenseBtn = document.getElementById("exp");
 
-const netEl = document.getElementById("net");
-const incomeEl = document.getElementById("income");
-const expenseEl = document.getElementById("depenses");
+const btnShowForm = document.getElementById("newTransaction");
+const formSection = document.getElementById("add");
+const btnAddTransaction = document.getElementById("adding");
 
-const descInput = document.getElementById("text-T");
-const amountInput = document.getElementById("amount-T");
-const dateInput = document.getElementById("date-T");
+const btnIncome = document.getElementById("inc");
+const btnExpense = document.getElementById("exp");
 
-const historyList = document.getElementById("historyList");
+const netDisplay = document.getElementById("net");
+const incomeDisplay = document.getElementById("income");
+const expenseDisplay = document.getElementById("depenses");
 
-let isIncome = true;
-let totalIncome = 0;
-let totalExpense = 0;
+const inputDesc = document.getElementById("text-T");
+const inputAmount = document.getElementById("amount-T");
+const inputDate = document.getElementById("date-T");
 
-let transactions = [];
-let editIndex = null;
+const historyContainer = document.getElementById("historyList");
 
-// Load from localStorage when page loads
-window.addEventListener("DOMContentLoaded", loadTransactions);
 
-// Show/Hide form
-addBtn.addEventListener("click", () => {
-  addSection.classList.toggle("hidden");
-  resetForm();
+//  Variables
+
+let transactions = [];       
+let editIndex = null;       
+let isIncome = true;        
+
+
+//  Show/Hide form
+
+btnShowForm.addEventListener("click", () => {
+  formSection.classList.toggle("hidden");
+  clearForm();
 });
 
-// Type of transaction
-incomeBtn.addEventListener("click", () => {
+
+//  Choose transaction type
+
+btnIncome.addEventListener("click", () => {
   isIncome = true;
-  incomeBtn.classList.add("bg-green-300");
-  expenseBtn.classList.remove("bg-red-300");
+  btnIncome.classList.add("bg-green-300");
+  btnExpense.classList.remove("bg-red-300");
 });
 
-expenseBtn.addEventListener("click", () => {
+btnExpense.addEventListener("click", () => {
   isIncome = false;
-  expenseBtn.classList.add("bg-red-300");
-  incomeBtn.classList.remove("bg-green-300");
+  btnExpense.classList.add("bg-red-300");
+  btnIncome.classList.remove("bg-green-300");
 });
 
-// Add or Update transaction
-addTransactionBtn.addEventListener("click", () => {
-  const desc = descInput.value.trim();
-  const amount = parseFloat(amountInput.value);
-  const date = dateInput.value || new Date().toLocaleDateString();
+
+//  Add or update transaction
+
+btnAddTransaction.addEventListener("click", () => {
+  const desc = inputDesc.value.trim();
+  const amount = parseFloat(inputAmount.value);
+  const date = inputDate.value || new Date().toLocaleDateString();
 
   if (!desc || isNaN(amount) || amount <= 0) {
     alert("Please fill all fields correctly.");
@@ -58,117 +62,128 @@ addTransactionBtn.addEventListener("click", () => {
   const transaction = { desc, amount, date, isIncome };
 
   if (editIndex !== null) {
-    const old = transactions[editIndex];
-    if (old.isIncome) totalIncome -= old.amount;
-    else totalExpense -= old.amount;
-
+    // Update existing transaction
     transactions[editIndex] = transaction;
     editIndex = null;
   } else {
+    // Add new transaction
     transactions.push(transaction);
   }
 
-  calculateTotals();
+  updateTotals();
   renderHistory();
-  saveTransactions(); //  Save changes
-
-  resetForm();
-  addSection.classList.add("hidden");
+  saveTransactions();
+  clearForm();
+  formSection.classList.add("hidden");
 });
 
-// Calculate totals
-function calculateTotals() {
-  totalIncome = 0;
-  totalExpense = 0;
-  transactions.forEach((t) => {
+
+//  Calculate totals
+
+function updateTotals() {
+  let totalIncome = 0;
+  let totalExpense = 0;
+
+  transactions.forEach(t => {
     if (t.isIncome) totalIncome += t.amount;
     else totalExpense += t.amount;
   });
 
   const net = totalIncome - totalExpense;
-  incomeEl.textContent = totalIncome.toFixed(2);
-  expenseEl.textContent = totalExpense.toFixed(2);
-  netEl.textContent = net.toFixed(2);
+
+  incomeDisplay.textContent = totalIncome.toFixed(2);
+  expenseDisplay.textContent = totalExpense.toFixed(2);
+  netDisplay.textContent = net.toFixed(2);
 }
 
-// Render list
+
+//  Show transaction history
+
 function renderHistory() {
-  historyList.innerHTML = "";
-  transactions
-    .slice()
-    .reverse()
-    .forEach((t, i) => {
-      const index = transactions.length - 1 - i;
-      const item = document.createElement("div");
-      item.className =
-        "flex justify-between items-center border border-gray-300 rounded-[10px] p-2 shadow-sm bg-white";
-      item.innerHTML = `
-        <div class="flex flex-col">
-          <span class="font-semibold text-gray-700">${t.desc}</span>
-          <span class="text-gray-500 text-sm">${t.date}</span>
-        </div>
-        <span class="${t.isIncome ? "text-green-600" : "text-red-600"} font-bold">
-          ${t.isIncome ? "+" : "-"}$${t.amount.toFixed(2)}
-        </span>
-        <div class="flex gap-2">
-          <button class="text-blue-500 hover:text-blue-700 font-semibold" onclick="editTransaction(${index})">Edit</button>
-          <button class="text-red-500 hover:text-red-700 font-semibold" onclick="deleteTransaction(${index})">Delete</button>
-        </div>
-      `;
-      historyList.appendChild(item);
-    });
+  historyContainer.innerHTML = "";
+
+  transactions.slice().reverse().forEach((t, i) => {
+    const index = transactions.length - 1 - i;
+
+    const item = document.createElement("div");
+    item.className = "flex justify-between items-center border p-2 bg-white rounded shadow-sm";
+
+    item.innerHTML = `
+      <div>
+        <div>${t.desc}</div>
+        <small>${t.date}</small>
+      </div>
+      <div class="${t.isIncome ? "text-green-600" : "text-red-600"}">
+        ${t.isIncome ? "+" : "-"}$${t.amount.toFixed(2)}
+      </div>
+      <div>
+        <button onclick="editTransaction(${index})">Edit</button>
+        <button onclick="deleteTransaction(${index})">Delete</button>
+      </div>
+    `;
+
+    historyContainer.appendChild(item);
+  });
 }
 
-//  Save to localStorage
+
+//  Save/load transactions
+
 function saveTransactions() {
   localStorage.setItem("transactions", JSON.stringify(transactions));
 }
 
-//  Load from localStorage
 function loadTransactions() {
   const data = localStorage.getItem("transactions");
   if (data) {
     transactions = JSON.parse(data);
-    calculateTotals();
+    updateTotals();
     renderHistory();
   }
 }
 
-// Delete
-window.deleteTransaction = function (index) {
+window.addEventListener("DOMContentLoaded", loadTransactions);
+
+//  Delete transaction
+
+window.deleteTransaction = function(index) {
   transactions.splice(index, 1);
-  calculateTotals();
+  updateTotals();
   renderHistory();
-  saveTransactions(); //  Save after delete
+  saveTransactions();
 };
 
-// Edit
-window.editTransaction = function (index) {
+//   Edit transaction
+
+window.editTransaction = function(index) {
   const t = transactions[index];
-  descInput.value = t.desc;
-  amountInput.value = t.amount;
-  dateInput.value = t.date;
+
+  inputDesc.value = t.desc;
+  inputAmount.value = t.amount;
+  inputDate.value = t.date;
   isIncome = t.isIncome;
 
-  if (t.isIncome) {
-    incomeBtn.classList.add("bg-green-300");
-    expenseBtn.classList.remove("bg-red-300");
+  if (isIncome) {
+    btnIncome.classList.add("bg-green-300");
+    btnExpense.classList.remove("bg-red-300");
   } else {
-    expenseBtn.classList.add("bg-red-300");
-    incomeBtn.classList.remove("bg-green-300");
+    btnExpense.classList.add("bg-red-300");
+    btnIncome.classList.remove("bg-green-300");
   }
 
-  addSection.classList.remove("hidden");
+  formSection.classList.remove("hidden");
   editIndex = index;
 };
 
-// Reset
-function resetForm() {
-  descInput.value = "";
-  amountInput.value = "";
-  dateInput.value = "";
+//  Clear form
+
+function clearForm() {
+  inputDesc.value = "";
+  inputAmount.value = "";
+  inputDate.value = "";
   editIndex = null;
-  incomeBtn.classList.remove("bg-green-300");
-  expenseBtn.classList.remove("bg-red-300");
   isIncome = true;
+
+  btnIncome.classList.remove("bg-green-300");
+  btnExpense.classList.remove("bg-red-300");
 }
