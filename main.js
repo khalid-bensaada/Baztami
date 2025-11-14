@@ -17,14 +17,13 @@ const inputDate = document.getElementById("date-T");
 const historyContainer = document.getElementById("historyList");
 
 
-//  Variables
+
 
 let transactions = [];       
 let editIndex = null;       
 let isIncome = true;        
 
 
-//  Show/Hide form
 
 btnShowForm.addEventListener("click", () => {
   formSection.classList.toggle("hidden");
@@ -32,7 +31,7 @@ btnShowForm.addEventListener("click", () => {
 });
 
 
-//  Choose transaction type
+
 
 btnIncome.addEventListener("click", () => {
   isIncome = true;
@@ -47,8 +46,6 @@ btnExpense.addEventListener("click", () => {
 });
 
 
-//  Add or update transaction
-
 btnAddTransaction.addEventListener("click", () => {
   const desc = inputDesc.value.trim();
   const amount = parseFloat(inputAmount.value);
@@ -62,11 +59,11 @@ btnAddTransaction.addEventListener("click", () => {
   const transaction = { desc, amount, date, isIncome };
 
   if (editIndex !== null) {
-    // Update existing transaction
+   
     transactions[editIndex] = transaction;
     editIndex = null;
   } else {
-    // Add new transaction
+    
     transactions.push(transaction);
   }
 
@@ -78,7 +75,7 @@ btnAddTransaction.addEventListener("click", () => {
 });
 
 
-//  Calculate totals
+
 
 function updateTotals() {
   let totalIncome = 0;
@@ -95,9 +92,6 @@ function updateTotals() {
   expenseDisplay.textContent = totalExpense.toFixed(2);
   netDisplay.textContent = net.toFixed(2);
 }
-
-
-//  Show transaction history
 
 function renderHistory() {
   historyContainer.innerHTML = "";
@@ -126,9 +120,6 @@ function renderHistory() {
   });
 }
 
-
-//  Save/load transactions
-
 function saveTransactions() {
   localStorage.setItem("transactions", JSON.stringify(transactions));
 }
@@ -144,7 +135,7 @@ function loadTransactions() {
 
 window.addEventListener("DOMContentLoaded", loadTransactions);
 
-//  Delete transaction
+
 
 window.deleteTransaction = function(index) {
   transactions.splice(index, 1);
@@ -153,7 +144,7 @@ window.deleteTransaction = function(index) {
   saveTransactions();
 };
 
-//   Edit transaction
+
 
 window.editTransaction = function(index) {
   const t = transactions[index];
@@ -175,7 +166,7 @@ window.editTransaction = function(index) {
   editIndex = index;
 };
 
-//  Clear form
+
 
 function clearForm() {
   inputDesc.value = "";
