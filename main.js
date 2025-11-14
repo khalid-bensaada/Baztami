@@ -17,8 +17,6 @@ const inputDate = document.getElementById("date-T");
 const historyContainer = document.getElementById("historyList");
 
 
-
-
 let transactions = [];       
 let editIndex = null;       
 let isIncome = true;        
@@ -29,8 +27,6 @@ btnShowForm.addEventListener("click", () => {
   formSection.classList.toggle("hidden");
   clearForm();
 });
-
-
 
 
 btnIncome.addEventListener("click", () => {
@@ -73,8 +69,6 @@ btnAddTransaction.addEventListener("click", () => {
   clearForm();
   formSection.classList.add("hidden");
 });
-
-
 
 
 function updateTotals() {
